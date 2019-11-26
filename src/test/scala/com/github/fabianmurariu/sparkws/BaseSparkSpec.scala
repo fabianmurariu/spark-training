@@ -1,7 +1,7 @@
 package com.github.fabianmurariu.sparkws
 
 import java.nio.file.{Files, Path, Paths}
-import java.time.{LocalDate, LocalDateTime}
+import java.time.{Instant, LocalDate, LocalDateTime}
 
 import org.apache.spark.sql.SparkSession
 import org.scalatest.{FlatSpec, Matchers}
@@ -25,4 +25,7 @@ trait BaseSparkSpec extends FlatSpec with Matchers {
   def timestamp(year:Int, month:Int, day:Int, hour:Int = 0, min:Int=0, second:Int=0):java.sql.Timestamp = {
     java.sql.Timestamp.valueOf(LocalDateTime.of(year, month, day, hour, min, second))
   }
+
+  def instant(year: Int, month:Int, day:Int) =
+    Instant.ofEpochSecond(1)
 }

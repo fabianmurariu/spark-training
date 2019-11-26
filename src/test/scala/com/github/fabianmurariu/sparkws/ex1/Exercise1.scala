@@ -1,5 +1,7 @@
 package com.github.fabianmurariu.sparkws.ex1
 
+import java.time.LocalDate
+
 import com.github.fabianmurariu.sparkws.BaseSparkSpec
 
 class Exercise1 extends BaseSparkSpec {
@@ -81,4 +83,19 @@ class Exercise1 extends BaseSparkSpec {
     first shouldBe("one", true, None, 1, timestamp(2019, 8, 2))
     second shouldBe("two", false, Some(2.3), 2, timestamp(1960, 1, 13))
   }
+
+  it should "read json lines from a file and convert to a case class, set timezone to BST" in {
+    val path = pathFor("/ex1/spec4.jl")
+    val ds = spark.read.option("timeZone", "BST")
+      .json(path.toString)
+      .as[JsonLine1]
+
+    val first :: second :: _ = ds.collect().toList
+    first shouldBe JsonLine1(1L, date(1932, 1, 7), collection.Seq(BoolValue(false)))
+    second shouldBe JsonLine1(3L, date(2013, 4, 29), collection.Seq(BoolValue(true)))
+  }
 }
+
+case class BoolValue(d: Boolean)
+
+case class JsonLine1(a: Long, b: java.sql.Date, c: collection.Seq[BoolValue])
