@@ -56,6 +56,29 @@ class Exercise2 extends BaseSparkSpec {
 
   }
 
+  it should "use join to find if a city is a capital" in {
+    val cities = citiesDataFrame
+    val capitals = Seq(
+      ("Washington DC", "United States"),
+      ("Warsaw", "Poland"),
+      ("Paris", "France")).toDF("capital", "country")
+
+    val result = cities.join(capitals, Seq("country"), "left_outer")
+      .withColumn("is_capital", $"name" === $"capital")
+      .select("name", "is_capital")
+      .as[(String, Boolean)]
+      .collect()
+
+    result shouldBe Seq(
+      ("Warsaw",true),
+      ("Cracow",false),
+      ("Paris",true),
+      ("Villeneuve-Loubet",false),
+      ("Pittsburgh PA",false),
+      ("Chicago IL",false),
+      ("Milwaukee WI",false))
+  }
+
   it should "find the most populated cities per country" in {
     val cities: DataFrame = citiesDataFrame
     // join solution no window
