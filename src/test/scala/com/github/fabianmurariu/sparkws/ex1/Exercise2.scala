@@ -56,8 +56,16 @@ class Exercise2 extends BaseSparkSpec {
 
   }
 
+  it should "add a column with all the names of the cities in capital letters named upper_name" in {
+    val first :: second :: _  = cities.withColumn("upper_name", upper($"name"))
+      .as[(String, String, Long, String)]
+      .collect().toList
+
+    first shouldBe("Warsaw", "Poland", 1764615, "WARSAW")
+    second shouldBe("Cracow", "Poland", 769498, "CRACOW")
+  }
+
   it should "use join to find if a city is a capital" in {
-    val cities = citiesDataFrame
     val capitals = Seq(
       ("Washington DC", "United States"),
       ("Warsaw", "Poland"),
@@ -80,7 +88,6 @@ class Exercise2 extends BaseSparkSpec {
   }
 
   it should "find the most populated cities per country" in {
-    val cities: DataFrame = citiesDataFrame
     // join solution no window
 //    val cities_with_pop_long = cities
 //      .withColumn("pop", translate('population, " ", "") cast "long")
